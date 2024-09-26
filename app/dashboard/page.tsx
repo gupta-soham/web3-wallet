@@ -2,13 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
 import { EthWallet } from "@/components/ETHWallet";
@@ -16,7 +10,6 @@ import { SolWallet } from "@/components/SOLWallet";
 
 export default function Dashboard() {
   const [mnemonic, setMnemonic] = useState("");
-
   const router = useRouter();
 
   useEffect(() => {
@@ -33,13 +26,9 @@ export default function Dashboard() {
   return (
     <div className="container mx-auto mt-5">
       <Navbar />
-      <Card className="w-[350px] mx-auto mt-4">
-        <CardHeader>
-          <CardTitle>Wallet Dashboard</CardTitle>
-          <CardDescription>Manage your crypto assets</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="eth">
+      <Card className="mt-4">
+        <CardContent className="p-6">
+          <Tabs defaultValue="eth" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="eth">Ethereum</TabsTrigger>
               <TabsTrigger value="sol">Solana</TabsTrigger>

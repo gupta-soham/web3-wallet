@@ -27,8 +27,11 @@ export default function Navbar() {
   const deleteAccount = () => {
     localStorage.removeItem("mnemonic");
     localStorage.removeItem("accounts");
-    localStorage.removeItem("ethAddresses");
-    localStorage.removeItem("solAddresses");
+    for (let i = 0; i < 5; i++) {
+      localStorage.removeItem(`ethAddresses_${i}`);
+      localStorage.removeItem(`solWallets_${i}`);
+    }
+    localStorage.removeItem("walletPassword");
     router.push("/");
   };
 

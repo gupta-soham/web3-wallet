@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -8,15 +9,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { generateMnemonic } from "bip39";
-import { Clipboard, ClipboardCheck, RefreshCw, Wallet } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { RefreshCw, Lock } from "lucide-react";
+import CopyToClipboard from "@/utils/copyToClipboard";
 
 export default function Home() {
   const [seedPhrase, setSeedPhrase] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const router = useRouter();
 
   const generateSeedPhrase = () => {
@@ -25,27 +27,22 @@ export default function Home() {
   };
 
   const createOrImportWallet = () => {
-    if (seedPhrase === "") {
-      generateSeedPhrase();
-      return;
-    }
-    if (
-      seedPhrase.split(" ").length === 12 ||
-      seedPhrase.split(" ").length === 24
-    ) {
+    if (seedPhrase && password && password === confirmPassword) {
       localStorage.setItem("mnemonic", seedPhrase);
+      localStorage.setItem("walletPassword", password);
       router.push("/dashboard");
-    } else {
-      alert("Please enter 12 or 24 word seed phrase or generate one.");
+    } else if (!seedPhrase) {
+      generateSeedPhrase();
+    } else if (!password) {
+      alert("Please enter a password.");
+    } else if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+    } else if (
+      seedPhrase.split(" ").length !== 12 ||
+      seedPhrase.split(" ").length !== 24
+    ) {
+      alert("Please enter a 12 or 24 word seed phrase or generate one.");
     }
-  };
-
-  const copySeedPhrase = () => {
-    navigator.clipboard.writeText(seedPhrase);
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 1800);
   };
 
   return (
@@ -83,24 +80,7 @@ export default function Home() {
                 <h3 className="text-lg font-semibold text-gray-700">
                   Your Seed Phrase
                 </h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={copySeedPhrase}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  {copied ? (
-                    <>
-                      <ClipboardCheck className="h-4 w-4 mr-2 text-green-500" />
-                      <p className="text-green-500 font-medium">Copied</p>
-                    </>
-                  ) : (
-                    <>
-                      <Clipboard className="h-4 w-4 mr-2" />
-                      Copy
-                    </>
-                  )}
-                </Button>
+                <CopyToClipboard content={seedPhrase} time={1800} small={false} />
               </div>
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
                 {seedPhrase.split(" ").map((word, index) => (
@@ -115,9 +95,24 @@ export default function Home() {
             </div>
           )}
 
+          <div className="space-y-4">
+            <Input
+              type="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder="Confirm password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+
           <Button onClick={createOrImportWallet} className="w-full" size="lg">
-            <Wallet className="mr-2 h-5 w-5" />
-            Create / Import Wallet
+            <Lock className="mr-2 h-5 w-5" />
+            Create/Import Wallet
           </Button>
         </CardContent>
       </Card>
