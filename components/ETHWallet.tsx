@@ -158,7 +158,7 @@ export const EthWallet = ({ mnemonic }: { mnemonic: string }) => {
                   )}
                 </Button>
                 <CopyToClipboard
-                  content={wallet.encryptedPrivateKey}
+                  content={decryptPrivateKey(wallet.encryptedPrivateKey).decrypted || "************************"}
                   time={1200}
                   small={true}
                   disabled={!isPasswordSet}
